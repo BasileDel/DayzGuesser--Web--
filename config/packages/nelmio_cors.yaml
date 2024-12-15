@@ -1,0 +1,14 @@
+nelmio_cors:
+    defaults:
+        allow_origin: ['http://localhost:4200'] # Autorise Angular
+        allow_credentials: true
+        allow_headers: ['content-type', 'authorization']
+        allow_methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+        max_age: 3600
+
+    paths:
+        '^/api/': # Applique les règles CORS uniquement sur les endpoints API
+            allow_origin: ['http://localhost:4200']
+            allow_headers: ['content-type', 'authorization']
+            allow_methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+            max_age: 3600

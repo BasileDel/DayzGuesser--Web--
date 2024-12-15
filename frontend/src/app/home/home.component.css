@@ -1,0 +1,138 @@
+/* -------------------------------- Reset style sheet --------------------------------*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* -------------------------------- Texte page d'accueil  --------------------------------*/
+.title {
+  /*margin-top: 10%;*/
+  font-family: Bebas Neue, sans-serif;
+}
+
+.indexTitle {
+  margin-bottom: 0.4em;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+}
+
+.play {
+  margin-top: 10%;
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 1700px; /* Hauteur totale de la fenêtre */
+  background-color: #545454;
+  color: white;
+  overflow: hidden;
+}
+
+.background-image {
+  position: absolute; /* Position indépendante */
+  top: 0; /* Fixée en haut */
+  left: 0; /* Fixée à gauche */
+  width: 100%;
+  height: 85vh; /* Occupe 85% de la hauteur de la page */
+  background-size: cover;
+  background-position: bottom; /* Aligne l'image par le bas */
+  background-repeat: no-repeat;
+  z-index: 1; /* Assure que l'image reste derrière */
+}
+
+.content {
+  position: relative; /* Permet de superposer au-dessus de l'image */
+  z-index: 2; /* Plus haut que l'image */
+  padding-top: 5%;
+  color: white;
+  text-align: center; /* Aligne le texte si nécessaire */
+}
+
+h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.play-button {
+  background-color: #1d4ed8; /* Couleur bleue pour le bouton */
+  color: white;
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.play-button:hover {
+  background-color: #2563eb; /* Lighter blue on hover */
+}
+
+.description {
+  font-size: 0.8rem;
+  max-width: 500px;
+  margin: 0 auto;
+  font-family: "Fira Code", monospace;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+
+
+/* --------------------------------Partie Learn-more --------------------------------*/
+.learn-more {
+  position: absolute; /* Position absolue pour permettre le centrage */
+  top: 85vh; /* Positionnée juste en dessous de .content */
+  left: 50%; /* Point de référence pour le centrage horizontal */
+  transform: translateX(-50%); /* Décale de la moitié de la largeur pour centrer */
+  width: 60%; /* Définit la largeur du bloc */
+  text-align: center;
+  min-height: calc(100vh - 85vh); /* Hauteur en fonction de l'espace restant */
+  background: rgba(0, 0, 0, 0.15); /* Fond légèrement translucide noir */
+  color: white; /* Couleur du texte */
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centrer verticalement */
+  align-items: center; /* Centrer horizontalement */
+  z-index: 3; /* S'assurer qu'elle est au-dessus du fond */
+  padding: 2rem; /* Espacement intérieur */
+  margin-top: 10%;
+
+/*  Shadow-box */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), /* Ombre en bas */
+  0 -4px 16px rgba(0, 0, 0, 0.15), /* Ombre en haut */
+  4px 0 16px rgba(0, 0, 0, 0.15), /* Ombre à droite */
+  -4px 0 16px rgba(0, 0, 0, 0.15); /* Ombre à gauche */
+  border-radius: 17px; /* Ajoute des bords arrondis */
+}
+
+.learn-more h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  color: #1d4ed8; /* Couleur bleue pour les titres */
+}
+
+.learn-more p {
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 800px; /* Limite la largeur des paragraphes */
+  margin-bottom: 1.5rem;
+  text-align: center; /* Centrer le texte */
+  color: rgba(255, 255, 255, 0.8); /* Gris doux pour le texte */
+  font-family: "Fira Code", monospace;
+}
+
+

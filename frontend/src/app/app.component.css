@@ -1,0 +1,31 @@
+/* Reset styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 1rem;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #007bff;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+nav ul li a:hover {
+  color: #0056b3;
+}
+
+

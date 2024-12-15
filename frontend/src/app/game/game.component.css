@@ -1,0 +1,123 @@
+.location-info-temp {
+  padding-top: 8%;
+}
+
+.background-location {
+  background-size: cover; /* Remplit l'écran tout en respectant les proportions */
+  background-position: center; /* Centre l'image */
+  background-repeat: no-repeat; /* Empêche la répétition */
+  height: 100vh; /* Occupe toute la hauteur de l'écran */
+  width: 100%; /* Occupe toute la largeur */
+  position: fixed; /* Fixe l'image en arrière-plan */
+  top: 0; /* Aligne l'image en haut */
+  left: 0; /* Aligne l'image à gauche */
+  z-index: -1; /* Place l'image derrière le contenu */
+}
+
+.content-overlay {
+  position: relative; /* Positionne le contenu par rapport à l'image */
+  z-index: 1; /* Place le contenu au-dessus de l'image */
+  color: white; /* Assure une bonne lisibilité du texte */
+  text-align: center; /* Centre le texte horizontalement */
+  height: 100%;
+  padding: 20px; /* Ajoute de l'espace autour du contenu */
+}
+
+h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+p {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* --------------------------------- Timer --------------------------------- */
+.time {
+  position: absolute;
+  top: 20px; /* Positionné en haut de l'écran */
+  left: 50%;
+  transform: translateX(-50%); /* Centré horizontalement */
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white; /* Couleur du texte */
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7); /* Ombre pour rendre le texte lisible */
+  z-index: 2; /* S'assurer qu'il est au-dessus de l'image */
+}
+
+/* --------------------------------- Score --------------------------------- */
+.score-bloc {
+  position: absolute;
+  top: 20px; /* Aligner avec le timer */
+  right: 20px; /* Positionné à droite de l'écran */
+  color: white;
+  font-size: 1rem;
+  text-align: right;
+  z-index: 2;
+}
+
+.score-global {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.score-round {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8); /* Couleur légèrement transparente */
+  margin-top: 5px;
+}
+
+/* ---------------------------- Submit Button ---------------------------- */
+.bouton-submit {
+  position: absolute;
+  bottom: 20px; /* Positionné en bas de l'écran */
+  left: 50%; /* Centré horizontalement */
+  transform: translateX(-50%); /* Centrage parfait */
+  z-index: 2;
+}
+
+.bouton-submit button {
+  background-color: #1d4ed8; /* Couleur bleue */
+  color: white;
+  font-size: 1.2rem;
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.bouton-submit button:hover {
+  background-color: #2563eb; /* Couleur plus claire au survol */
+}
+
+/* ---------------------------- Map Bloc ---------------------------- */
+.map-bloc {
+  position: absolute;
+  bottom: 20px; /* Positionné en bas de l'écran */
+  right: 20px; /* Positionné à droite de l'écran */
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.interactive-map {
+  background-color: rgba(255, 255, 255, 0.9); /* Fond blanc avec transparence */
+  border: 1px solid rgba(0, 0, 0, 0.2); /* Bordure légère */
+  border-radius: 10px;
+  width: 370px; /* Taille de la carte */
+  height: 210px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Ombre pour effet de relief */
+}
+
+.difficulty {
+  color: #ff8500; /* Couleur orange pour la difficulté */
+  font-size: 1rem;
+  font-weight: bold;
+  margin-top: 5px;
+}
+

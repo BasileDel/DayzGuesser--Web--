@@ -1,5 +1,10 @@
-controllers:
-    resource:
-        path: ../src/Controller/
-        namespace: App\Controller
+api:
+    resource: "../src/Controller/"
     type: attribute
+    prefix: /api
+
+frontend:
+    path: /{route}
+    controller: App\Controller\FrontendController::index
+    requirements:
+        route: .*
