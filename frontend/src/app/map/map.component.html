@@ -1,7 +1,6 @@
 <div class="map-container" [ngClass]="{ expanded: isExpanded, collapsed: !isExpanded }">
   <div id="map"></div>
 </div>
-
 <button (click)="toggleMap()" class="toggle-button">
   {{ isExpanded ? 'Réduire' : 'Agrandir' }}
 </button>

@@ -7,6 +7,8 @@
   height: 30%; /* Hauteur initiale */
   transition: width 0.3s ease, height 0.3s ease, bottom 0.3s ease, right 0.3s ease; /* Animation de transition */
   z-index: 5; /* S'assurer qu'elle est au-dessus d'autres éléments si nécessaire */
+  border-radius: 10px; /* Coins arrondis pour l'ensemble */
+  overflow: hidden; /* Empêche les débordements */
 }
 
 /* Carte dépliée */
@@ -29,25 +31,23 @@
 #map {
   width: 100%; /* Remplit entièrement le conteneur */
   height: 100%; /* Remplit entièrement le conteneur */
-  border-radius: 10px; /* Coins arrondis pour un effet esthétique */
-  overflow: hidden; /* Empêche les débordements */
 }
 
 /* Bouton de basculement */
 .toggle-button {
   position: absolute;
-  bottom: 10px; /* Placé légèrement au-dessus de la carte */
-  right: 10px;
-  background-color: #007bff;
-  color: white;
+  bottom: 10px; /* Placé en bas de .map-container */
+  right: 10px; /* Placé à droite de .map-container */
+  background-color: rgba(0, 0, 0, 0.7); /* Fond semi-transparent */
+  color: white; /* Texte blanc */
   border: none;
-  padding: 10px 20px;
-  font-size: 14px;
-  border-radius: 5px;
+  padding: 5px 10px; /* Réduction de la taille */
+  font-size: 12px; /* Texte plus petit */
+  border-radius: 5px; /* Coins arrondis */
   cursor: pointer;
   z-index: 10; /* Toujours visible au-dessus de la carte */
 }
 
 .toggle-button:hover {
-  background-color: #0056b3;
+  background-color: rgba(0, 0, 0, 0.9); /* Fond légèrement plus foncé au survol */
 }

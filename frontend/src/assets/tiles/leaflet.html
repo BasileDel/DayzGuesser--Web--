@@ -19,14 +19,13 @@
   <div id="map"></div>
   <input id="slider" type="range" min="0" max="1" step="0.1" value="1" oninput="layer.setOpacity(this.value)">
   <script type="text/javascript">
-    var mapExtent = [-0.00045026, 0.00009390, -0.00036639, 0.00018077];
-    var mapMinZoom = 21;
-    var mapMaxZoom = 24;
+    var mapExtent = [0.00000000, 0.00000000, 0.13798123, 0.13798109];
+    var mapMinZoom = 11;
+    var mapMaxZoom = 15;
     var bounds = new L.LatLngBounds(
       new L.LatLng(mapExtent[1], mapExtent[0]),
       new L.LatLng(mapExtent[3], mapExtent[2]));
     var map = L.map('map').fitBounds(bounds);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
     var layer;
     var options = {
       minZoom: mapMinZoom,
@@ -36,7 +35,7 @@
       tms: false
     };
     layer = L.tileLayer('{z}/{x}/{y}.png', options).addTo(map);
-    map.setZoom(22);
+    map.setZoom(12);
   </script>
 </body>
 </html>

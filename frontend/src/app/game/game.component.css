@@ -68,6 +68,8 @@ p {
   margin-top: 5px;
 }
 
+
+
 /* ---------------------------- Submit Button ---------------------------- */
 .bouton-submit {
   position: absolute;
@@ -80,17 +82,20 @@ p {
 .bouton-submit button {
   background-color: #1d4ed8; /* Couleur bleue */
   color: white;
-  font-size: 1.2rem;
-  padding: 0.8rem 2rem;
+  font-size: 1rem;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  width: 120px;
+  height: 30px;
 }
 
 .bouton-submit button:hover {
   background-color: #2563eb; /* Couleur plus claire au survol */
 }
+
+
 
 /* ---------------------------- Map Bloc ---------------------------- */
 .map-bloc {
@@ -121,3 +126,49 @@ p {
   margin-top: 5px;
 }
 
+
+
+/* ---------------------------- loading screen ---------------------------- */
+.loading-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #2c2c2c; /* Couleur sobre de fond */
+  color: #ffffff; /* Couleur du texte */
+  font-family: Arial, sans-serif;
+  z-index: 1000; /* Toujours au-dessus des autres éléments */
+}
+
+/* Texte "Loading..." */
+.loading-screen p {
+  margin-top: 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 1px;
+  color: #ffffff; /* Couleur blanche élégante */
+  opacity: 0.8;
+}
+
+/* Spinner */
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid rgba(255, 255, 255, 0.2); /* Bord extérieur transparent */
+  border-top-color: #ffffff; /* Bord en haut blanc */
+  border-radius: 50%; /* Cercle */
+  animation: spin 1s linear infinite; /* Animation de rotation */
+}
+
+/* Animation du spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

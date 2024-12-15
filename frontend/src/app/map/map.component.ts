@@ -1,32 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import Map from 'ol/Map';
-import View from 'ol/View';
-import { Feature } from 'ol';
-import Point from 'ol/geom/Point';
-import TileLayer from 'ol/layer/Tile';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import OSM from 'ol/source/OSM';
-import { fromLonLat } from 'ol/proj';
-import { Style, Icon, Stroke, Fill } from 'ol/style';
-import CircleStyle from 'ol/style/Circle';
-import {NgClass} from '@angular/common';
+import * as L from 'leaflet';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css'],
   standalone: true,
-  imports: [
-    NgClass
-  ]
+  imports: [NgClass],
 })
 export class MapComponent implements OnInit {
-  map!: Map; // La carte OpenLayers
-  marker!: Feature<Point>; // Un seul marqueur
-  vectorSource!: VectorSource; // Source des données vectorielles
-  markerLayer!: VectorLayer<VectorSource>; // Couche vectorielle pour afficher le marqueur
-  isExpanded: boolean = false; // Indique si la carte est pliée ou dépliée
+  private map!: L.Map; // Instance de la carte Leaflet
+  private marker!: L.Marker; // Marqueur unique
+  protected isExpanded: boolean = false; // Indique si la carte est pliée ou dépliée
 
   ngOnInit(): void {
     this.initMap();
@@ -34,78 +20,66 @@ export class MapComponent implements OnInit {
 
   toggleMap(): void {
     this.isExpanded = !this.isExpanded;
+
+    // Recalcule la taille de la carte après basculement
+    setTimeout(() => {
+      this.map.invalidateSize();
+    }, 300);
   }
 
-  /**
-   * Initialisation de la carte et des couches.
-   */
   private initMap(): void {
-    // Création de la source vectorielle pour les marqueurs
-    this.vectorSource = new VectorSource();
-
-    // Création de la couche vectorielle pour les marqueurs
-    this.markerLayer = new VectorLayer({
-      source: this.vectorSource,
-    });
+    // Définir les limites de la carte
+    const bounds = L.latLngBounds(
+      L.latLng(-85.0511287798066, -180), // Coin inférieur gauche en coordonnées EPSG:3857
+      L.latLng(85.0511287798066, 180)   // Coin supérieur droit
+    );
 
     // Initialisation de la carte
-    this.map = new Map({
-      target: 'map', // ID de l'élément HTML où la carte sera affichée
-      layers: [
-        new TileLayer({
-          source: new OSM(), // Source OpenStreetMap
-        }),
-        this.markerLayer, // Ajout de la couche de marqueurs
-      ],
-      view: new View({
-        center: fromLonLat([0, 0]), // Centre initial en coordonnées géographiques
-        zoom: 2, // Niveau de zoom initial
-      }),
+    this.map = L.map('map', {
+      center: [0, 0], // Centre initial
+      zoom: 2,        // Zoom initial
+      maxBounds: bounds, // Limite pour empêcher de sortir de la carte
+      maxBoundsViscosity: 1.0, // Forcer les limites
     });
 
-    // Ajout d'un événement de clic sur la carte
-    this.map.on('singleclick', (event) => {
-      const coordinates = event.coordinate; // Récupérer les coordonnées du clic
-      console.log('Coordonnées cliquées :', coordinates);
+    // Chargement des tuiles depuis MapTiler
+    const maptilerTiles = L.tileLayer(
+      'https://api.maptiler.com/tiles/649bb2df-b652-4335-abac-af4936dc3d0e/{z}/{x}/{y}.png?key=G56xJT68pizG6yihT24a',
+      {
+        attribution: '&copy; <a href="https://maptiler.com/">MapTiler</a> &copy; OpenStreetMap contributors',
+        tileSize: 512, // Taille des tuiles MapTiler
+        zoomOffset: -1, // Décalage adapté aux tuiles 512x512
+        minZoom: 0,     // Niveau de zoom minimum valide
+        maxZoom: 20,    // Niveau de zoom maximum fourni par MapTiler
+        errorTileUrl: 'https://api.maptiler.com/resources/logo.svg', // Tuile d'erreur personnalisée
+      }
+    );
 
-      // Ajouter ou déplacer un marqueur sur la carte
-      this.addOrMoveMarker(coordinates);
+
+    // Ajout des tuiles à la carte
+    maptilerTiles.addTo(this.map);
+
+    // Gestion des clics sur la carte pour ajouter ou déplacer un marqueur
+    this.map.on('click', (event: L.LeafletMouseEvent) => {
+      const { lat, lng } = event.latlng;
+      this.addOrMoveMarker([lat, lng]);
+      console.log(`Coordonnées cliquées : X=${lng}, Y=${lat}`);
     });
   }
 
-  /**
-   * Ajoute un marqueur ou déplace un marqueur existant.
-   * @param coordinates Les coordonnées du clic.
-   */
-  private addOrMoveMarker(coordinates: number[]): void {
+  private addOrMoveMarker(coordinates: [number, number]): void {
     if (this.marker) {
-      // Si le marqueur existe, on le déplace
-      const geometry = this.marker.getGeometry() as Point;
-      geometry.setCoordinates(coordinates);
+      // Déplacer le marqueur existant
+      this.marker.setLatLng(coordinates);
     } else {
-      // Sinon, on crée un nouveau marqueur
-      this.marker = new Feature({
-        geometry: new Point(coordinates),
+      // Créer un nouveau marqueur
+      const markerIcon = L.icon({
+        iconUrl: 'assets/pin.png', // Chemin vers l'icône du marqueur
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
       });
 
-      // Style du marqueur (cercle rouge avec bordure blanche)
-      const markerStyle = new Style({
-        image: new CircleStyle({
-          radius: 7,
-          fill: new Fill({
-            color: '#FF0000', // Rouge
-          }),
-          stroke: new Stroke({
-            color: '#FFFFFF', // Blanc
-            width: 2,
-          }),
-        }),
-      });
-
-      this.marker.setStyle(markerStyle);
-
-      // Ajout du marqueur à la source vectorielle
-      this.vectorSource.addFeature(this.marker);
+      this.marker = L.marker(coordinates, { icon: markerIcon }).addTo(this.map);
     }
   }
 }

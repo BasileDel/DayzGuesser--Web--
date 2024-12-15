@@ -32,6 +32,7 @@
 
     <!-- Carte interactive -->
     <div id="map-container">
+      <div class="difficulty"> difficulty : {{ location.difficulty }}</div>
       <app-map></app-map>
     </div>
   </div>
@@ -42,6 +43,8 @@
   </div>
 </div>
 
-<div *ngIf="!location && !error">
+<div *ngIf="!location && !error" class="loading-screen">
+  <div class="spinner"></div>
   <p>Loading...</p>
 </div>
+

@@ -32,10 +32,10 @@ body { background: #f4f4f4;}
 <script type="text/javascript">
 var map;
 var mapBounds = new google.maps.LatLngBounds(
-    new google.maps.LatLng(0.000094, -0.000450),
-    new google.maps.LatLng(0.000181, -0.000366));
-var mapMinZoom = 21;
-var mapMaxZoom = 24;
+    new google.maps.LatLng(0.000000, 0.000000),
+    new google.maps.LatLng(0.137981, 0.137981));
+var mapMinZoom = 11;
+var mapMaxZoom = 15;
 var maptiler = new google.maps.ImageMapType({
     getTileUrl: function(coord, zoom) { 
         var proj = map.getProjection();
@@ -57,20 +57,29 @@ var maptiler = new google.maps.ImageMapType({
     isPng: true,
     name: "Rendered with MapTiler Engine <https://www.maptiler.com/engine/>, non-commercial use only",
     alt: "Rendered with MapTiler Engine",
-
-    opacity: 1.0
+    minZoom: mapMinZoom,
+    maxZoom: mapMaxZoom
 });
 function init() {
     var opts = {
         tilt:0,
         streetViewControl: false,
-        center: new google.maps.LatLng(0.000137, -0.000408),
-        zoom: 21
-    };
+        mapTypeId: 'maptiler',
+        backgroundColor: "rgb(255,255,255)",
+        center: new google.maps.LatLng(0.068991, 0.068991),
+        zoom: 11,
+        mapTypeControlOptions: {
+            mapTypeIds: [
+                'maptiler',
+                google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE,
+                google.maps.MapTypeId.HYBRID, google.maps.MapTypeId.TERRAIN
+            ]
+        },
+    }
     map = new google.maps.Map(document.getElementById("map"), opts);
-    map.setMapTypeId('satellite');
-    map.overlayMapTypes.insertAt(0, maptiler);
+    map.mapTypes.set('maptiler', maptiler);
 }
+
 </script>
 </head>
 <body onload="init()">
