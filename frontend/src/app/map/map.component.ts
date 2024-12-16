@@ -13,6 +13,7 @@ export class MapComponent implements OnInit {
   private map!: L.Map; // Instance de la carte Leaflet
   private marker!: L.Marker; // Marqueur unique
   protected isExpanded: boolean = false; // Indique si la carte est pliée ou dépliée
+  isLoading: boolean = true; // Indicateur de chargement
 
   ngOnInit(): void {
     this.initMap();
@@ -23,41 +24,50 @@ export class MapComponent implements OnInit {
 
     // Recalcule la taille de la carte après basculement
     setTimeout(() => {
-      this.map.invalidateSize();
+      if (this.map) {
+        this.map.invalidateSize();
+      }
     }, 300);
   }
 
   private initMap(): void {
-    // Définir les limites de la carte
-    const bounds = L.latLngBounds(
-      L.latLng(-85.0511287798066, -180), // Coin inférieur gauche en coordonnées EPSG:3857
-      L.latLng(85.0511287798066, 180)   // Coin supérieur droit
+    // Étendue de l'image géoréférencée avec L.latLngBounds
+    const imageBounds = L.latLngBounds(
+      [0, 0],        // Coin inférieur gauche (ymin, xmin)
+      [15360, 15360] // Coin supérieur droit (ymax, xmax)
     );
 
     // Initialisation de la carte
     this.map = L.map('map', {
-      center: [0, 0], // Centre initial
-      zoom: 2,        // Zoom initial
-      maxBounds: bounds, // Limite pour empêcher de sortir de la carte
-      maxBoundsViscosity: 1.0, // Forcer les limites
+      center: [9680, 7680], // Centre de la carte
+      zoom: 0,              // Zoom initial (dézoomé)
+      minZoom: -3,          // Permet de dézoomer davantage
+      maxZoom: 3,           // Niveau de zoom maximum
+      crs: L.CRS.Simple,    // Utiliser une projection plate (pixels)
+      maxBounds: imageBounds, // Empêche de sortir des limites
+      maxBoundsViscosity: 1.0,
     });
 
-    // Chargement des tuiles depuis MapTiler
-    const maptilerTiles = L.tileLayer(
-      'https://api.maptiler.com/tiles/649bb2df-b652-4335-abac-af4936dc3d0e/{z}/{x}/{y}.png?key=G56xJT68pizG6yihT24a',
-      {
-        attribution: '&copy; <a href="https://maptiler.com/">MapTiler</a> &copy; OpenStreetMap contributors',
-        tileSize: 512, // Taille des tuiles MapTiler
-        zoomOffset: -1, // Décalage adapté aux tuiles 512x512
-        minZoom: 0,     // Niveau de zoom minimum valide
-        maxZoom: 20,    // Niveau de zoom maximum fourni par MapTiler
-        errorTileUrl: 'https://api.maptiler.com/resources/logo.svg', // Tuile d'erreur personnalisée
-      }
-    );
+    // Ajouter l'image géoréférencée avec ImageOverlay
+    const imageUrl = 'assets/georeferenced/day-z-sakhal-watermarked_georeferenced.png'; // Chemin vers l'image locale
+    const imageOverlay = L.imageOverlay(imageUrl, imageBounds, {
+      opacity: 1.0,
+      interactive: true,
+    });
 
+    imageOverlay.addTo(this.map);
 
-    // Ajout des tuiles à la carte
-    maptilerTiles.addTo(this.map);
+    // Ajuster la vue pour englober toute l'image
+    this.map.fitBounds(imageBounds);
+
+    // Gestion des événements de chargement
+    imageOverlay.on('loading', () => {
+      this.isLoading = true;
+    });
+
+    imageOverlay.on('load', () => {
+      this.isLoading = false;
+    });
 
     // Gestion des clics sur la carte pour ajouter ou déplacer un marqueur
     this.map.on('click', (event: L.LeafletMouseEvent) => {

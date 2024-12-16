@@ -51,3 +51,32 @@
 .toggle-button:hover {
   background-color: rgba(0, 0, 0, 0.9); /* Fond légèrement plus foncé au survol */
 }
+
+.loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  font-size: 18px;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid rgba(255, 255, 255, 0.2); /* Bord extérieur transparent */
+  border-top-color: #ffffff; /* Bord en haut blanc */
+  border-radius: 50%; /* Cercle */
+  animation: spin 1s linear infinite; /* Animation de rotation */
+}
+
+/* Animation du spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
