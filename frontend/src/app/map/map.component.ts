@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import * as L from 'leaflet';
 import { NgClass } from '@angular/common';
+import { MapService } from '../services/map.service';
 
 @Component({
   selector: 'app-map',
@@ -13,8 +14,10 @@ export class MapComponent implements OnInit {
   private map!: L.Map; // Instance de la carte Leaflet
   private marker!: L.Marker; // Marqueur unique
   protected isExpanded: boolean = false; // Indique si la carte est pliée ou dépliée
-  isLoading: boolean = true; // Indicateur de chargement
+  isLoading: boolean = false; // Indicateur de chargement
   @Output() userGuess = new EventEmitter<[number, number]>(); // Événement pour signaler les coordonnées cliquées
+
+  constructor(private mapService: MapService) {}
 
   ngOnInit(): void {
     this.initMap();
@@ -32,13 +35,17 @@ export class MapComponent implements OnInit {
   }
 
   resetMap(): void {
-    this.map.eachLayer((layer) => {
-      if (!(layer instanceof L.ImageOverlay)) {
-        this.map.removeLayer(layer);
-      }
-    });
-    this.marker = null!;
+    if (this.map) {
+      // Supprime toutes les couches sauf l'image de fond
+      this.map.eachLayer((layer) => {
+        if (!(layer instanceof L.ImageOverlay)) {
+          this.map.removeLayer(layer);
+        }
+      });
+      this.marker = null!; // Réinitialise le marqueur
+    }
   }
+
 
   private initMap(): void {
     const imageBounds = L.latLngBounds(
@@ -48,16 +55,19 @@ export class MapComponent implements OnInit {
 
     // Initialisation de la carte
     this.map = L.map('map', {
-      center: [7680, 7680], // Centre de la carte
-      zoom: 0,              // Zoom initial (dézoomé)
-      minZoom: -2,          // Permet de dézoomer davantage
-      maxZoom: 3,           // Niveau de zoom maximum
-      crs: L.CRS.Simple,    // Utiliser une projection plate (pixels)
-      maxBounds: imageBounds, // Empêche de sortir des limites
+      center: [11000, 11000], // Centre de la carte
+      zoom: 2,                // Zoom initial
+      minZoom: -3.8,          // Zoom minimum
+      maxZoom: 3,             // Zoom maximum
+      crs: L.CRS.Simple,      // Utiliser une projection plate (pixels)
+      maxBounds: imageBounds, // Limite de la carte
       maxBoundsViscosity: 1.0,
-      zoomControl: false,   // Désactive les boutons de zoom
+      zoomControl: false,     // Désactive les boutons de zoom
       attributionControl: false, // Désactive le texte d'attribution
     });
+
+    // Transmettre la référence de la carte au MapService
+    this.mapService.setMapInstance(this.map);
 
     const imageUrl = 'assets/georeferenced/day-z-sakhal-watermarked_georeferenced.png'; // Chemin vers l'image locale
     const imageOverlay = L.imageOverlay(imageUrl, imageBounds, {
@@ -75,13 +85,14 @@ export class MapComponent implements OnInit {
 
     imageOverlay.addTo(this.map);
 
-    this.map.fitBounds(imageBounds);
+    // Appliquer manuellement la vue (setView) pour forcer le zoom et le centre initial
+    this.map.setView([10000, 10000], -3);
 
-    // Gestion des clics sur la carte pour ajouter ou déplacer un marqueur
+    // Gestion des clics pour ajouter un marqueur
     this.map.on('click', (event: L.LeafletMouseEvent) => {
       const { lat, lng } = event.latlng;
       this.addOrMoveMarker([lat, lng]);
-      this.userGuess.emit([lat, lng]); // Signale les coordonnées cliquées
+      this.userGuess.emit([lat, lng]);
       console.log(`Coordonnées cliquées : X=${lng}, Y=${lat}`);
     });
   }

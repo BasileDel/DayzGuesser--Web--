@@ -1,45 +1,20 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { GameService } from '../services/game.service';
-
+import { MapService } from '../services/map.service';
+import { MapComponent } from '../map/map.component';
 
 @Component({
-    selector: 'app-game',
-    templateUrl: './game.component.html',
-    standalone: false,
-    styleUrl: './game.component.css'
+  selector: 'app-game',
+  templateUrl: './game.component.html',
+  standalone: false,
+  styleUrl: './game.component.css',
 })
-
 export class GameComponent implements OnInit {
   location: any = null; // Données de l'API
   error: string | null = null;
 
-  constructor(private gameService: GameService) {}
-
-  /* ---------------------------- Random loading ScreeShot ---------------------------- */
-  ngOnInit(): void {
-    this.randomLocationScreenshot();
-    this.startGame();
-  }
-
-
-  randomLocationScreenshot(): void {
-    setTimeout(() => {
-      this.gameService.getRandomLocation().subscribe({
-        next: (data) => {
-          this.location = data;
-        },
-        error: (err) => {
-          this.error = 'An error occurred while fetching data.';
-          console.error(err);
-        }
-      });
-    }, 2000);
-  } // Attendre 1 seconde avant de charger les données
-
-
-
-  /* ---------------------------- Round Method ---------------------------- */
-  // Initialisation
+  // Initialisation des variables
+  isLoading: boolean = false;
   rounds: number = 5;
   currentRound: number = 1;
   timer: number = 90;
@@ -47,15 +22,42 @@ export class GameComponent implements OnInit {
 
   totalScore: number = 0;
   roundScores: number[] = [];
-
-  correctAnswer: [number, number] = [7680, 7680];
+  correctAnswer: [number, number] = [0, 0]; // Coordonnées par défaut
   userGuess: [number, number] | null = null;
 
   gameState: 'playing' | 'reviewing' | 'end' = 'playing';
-  isMapDisabled: boolean = false; // Par défaut, la carte est interactive
+  isMapDisabled: boolean = false;
 
+  constructor(private gameService: GameService, private mapService: MapService) {}
 
-  // Timer
+  @ViewChild(MapComponent) mapComponent!: MapComponent;
+
+  ngOnInit(): void {
+    this.startGame();
+  }
+
+  /* ---------------------------- Charger une localisation ---------------------------- */
+  randomLocationScreenshot(): void {
+    this.isLoading = true;
+    this.gameService.getRandomLocation().subscribe({
+      next: (data) => {
+        this.location = data;
+
+        // Mise à jour des coordonnées correctes
+        this.correctAnswer = [data.xCoordinate, data.yCoordinate];
+        console.log(`Coordonnées correctes : X=${data.xCoordinate}, Y=${data.yCoordinate}`);
+
+        this.isLoading = false; // Désactive le chargement
+      },
+      error: (err) => {
+        this.error = 'An error occurred while fetching data.';
+        console.error(err);
+        this.isLoading = false;
+      },
+    });
+  }
+
+  /* ---------------------------- Méthodes de jeu ---------------------------- */
   startGame(): void {
     this.currentRound = 1;
     this.totalScore = 0;
@@ -64,81 +66,93 @@ export class GameComponent implements OnInit {
   }
 
   startRound(): void {
-    this.timer = 90; // Réinitialise le timer
-    this.userGuess = null; // Réinitialise le guess utilisateur
-    this.gameState = 'playing'; // Passe à l'état de jeu
-    this.startTimer(); // Démarre le timer automatiquement
+    this.timer = 90;
+    this.userGuess = null;
+    this.gameState = 'playing';
+    this.isMapDisabled = false;
+
+    this.mapService.enableInteractions((event: L.LeafletMouseEvent) => {
+      this.mapComponent['addOrMoveMarker']([event.latlng.lat, event.latlng.lng]);
+      this.mapComponent.userGuess.emit([event.latlng.lat, event.latlng.lng]);
+    });
+
+    this.randomLocationScreenshot(); // Récupère une nouvelle localisation
+    this.startTimer();
   }
 
   startTimer(): void {
-    this.stopTimer(); // Stoppe le timer précédent, si nécessaire
+    this.stopTimer();
     this.interval = setInterval(() => {
       if (this.timer > 0) {
         this.timer--;
       } else {
-        this.submitGuess(); // Passe automatiquement au guess si le temps est écoulé
+        this.submitGuess();
       }
-    }, 1000); // Décompte toutes les secondes
+    }, 1000);
   }
 
   stopTimer(): void {
     if (this.interval) {
-      clearInterval(this.interval); // Stoppe le timer en cours
+      clearInterval(this.interval);
     }
   }
 
   submitGuess(): void {
-    this.stopTimer(); // Stoppe le timer une fois que le guess est soumis
-    this.isMapDisabled = true; // Désactive la carte en ajoutant le voile
+    if (!this.userGuess) {
+      console.log('Temps écoulé, aucun guess fait.');
+      this.userGuess = null;
+    }
+    this.finishRound();
+  }
 
-    this.gameState = 'reviewing'; // Passe à l'état de révision (affiche les réponses)
+  private finishRound(): void {
+    this.isMapDisabled = true;
+    this.mapService.disableInteractions();
+    this.stopTimer();
+    this.gameState = 'reviewing';
+    this.calculateScore();
 
-    this.calculateScore(); // Calcule le score
-    setTimeout(() => this.nextRound(), 3000); // Passe au prochain round après un délai
+    this.mapService.addMarkersAndLine(this.userGuess!, this.correctAnswer);
+    this.mapService.expandMap();
   }
 
   nextRound(): void {
     if (this.currentRound < this.rounds) {
       this.currentRound++;
-      this.randomLocationScreenshot(); // Charge une nouvelle image
-      this.isMapDisabled = false; // Réactive la carte
-      this.startRound(); // Démarre le round suivant
+      this.startRound();
     } else {
-      this.endGame(); // Termine le jeu après le dernier round
+      this.endGame();
     }
   }
 
   calculateScore(): void {
-    if (!this.userGuess) return; // Si aucun guess, pas de score
+    if (!this.userGuess) {
+      this.roundScores.push(0);
+      return;
+    }
 
     const distance = this.getDistance(this.userGuess, this.correctAnswer);
     const timeBonus = this.timer * 10;
 
-    // Calcul du score et suppression des chiffres après la virgule
     const roundScore = Math.max(10000 - distance - timeBonus, 0);
-    const roundedScore = Math.floor(roundScore); // Supprime les chiffres après la virgule
+    const roundedScore = Math.floor(roundScore);
 
-    this.roundScores.push(roundedScore); // Enregistrer le score arrondi pour le round
-    this.totalScore += roundedScore; // Ajouter au score total
+    this.roundScores.push(roundedScore);
+    this.totalScore += roundedScore;
   }
 
-
   endGame(): void {
-    this.gameState = 'end'; // Passe à l'état de fin de jeu
-    this.stopTimer(); // Arrête le timer si ce n'est pas fait
+    this.gameState = 'end';
+    this.stopTimer();
   }
 
   getDistance(guess: [number, number], correct: [number, number]): number {
     const dx = guess[0] - correct[0];
     const dy = guess[1] - correct[1];
-    return Math.sqrt(dx * dx + dy * dy); // Calcule la distance entre les deux points
+    return Math.sqrt(dx * dx + dy * dy);
   }
 
   handleUserGuess(guess: [number, number]): void {
-    this.userGuess = guess; // Met à jour la position cliquée
-    console.log('User Guess:', this.userGuess); // Optionnel : pour vérifier les coordonnées
+    this.userGuess = guess;
   }
-
-
-
 }

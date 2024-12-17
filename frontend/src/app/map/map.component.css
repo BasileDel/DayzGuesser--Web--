@@ -80,3 +80,14 @@
     transform: rotate(360deg);
   }
 }
+
+/*.map-container.expanded {*/
+/*  width: 100%;*/
+/*  height: 100%;*/
+/*  position: fixed;*/
+/*  top: 0;*/
+/*  left: 0;*/
+/*  z-index: 1000; !* Place la carte en haut *!*/
+/*  background: white;*/
+/*  transition: all 0.3s ease;*/
+/*}*/

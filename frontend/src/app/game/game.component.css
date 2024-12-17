@@ -95,6 +95,21 @@ p {
   background-color: #2563eb; /* Couleur plus claire au survol */
 }
 
+.next-round-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #28a745; /* Vert */
+  color: white;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.next-round-button:hover {
+  background-color: #218838; /* Vert foncé au survol */
+}
 
 
 /* ---------------------------- Map Bloc ---------------------------- */
@@ -129,6 +144,23 @@ p {
 
 
 /* ---------------------------- loading screen ---------------------------- */
+/* Overlay de chargement */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* Fond semi-transparent */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: #fff;
+  font-size: 1.5rem;
+  z-index: 9999; /* Toujours au-dessus */
+}
+
 .loading-screen {
   display: flex;
   justify-content: center;

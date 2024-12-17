@@ -13,7 +13,6 @@ class GameController extends AbstractController
     #[Route('/random-location', name: 'api_random_location', methods: ['GET'])]
     public function getRandomLocation(EntityManagerInterface $entityManager): JsonResponse
     {
-//        dd('Controller reached!');
 
         // Récupère une entrée aléatoire de la base de données
         $repository = $entityManager->getRepository(RoundLocation::class);
@@ -25,9 +24,6 @@ class GameController extends AbstractController
 
         $randomLocation = $locations[array_rand($locations)];
 
-//        if ($randomLocation->getDifficulty() == 1) {
-//            'difficulty' => 'Easy';
-//        }
 
         // Retourne une réponse JSON
         return new JsonResponse([

@@ -1,19 +1,27 @@
-<div *ngIf="location" class="background-location"
+<!-- Indicateur de chargement global -->
+<div *ngIf="isLoading || (!location && !error)" class="loading-screen">
+  <div class="spinner"></div>
+  <p>Loading...</p>
+</div>
+
+<!-- Contenu principal -->
+<div *ngIf="location && !isLoading" class="background-location"
      [ngStyle]="{'background-image': 'url(assets/' + location.imagePath + ')'}">
+
   <div class="content-overlay">
     <!-- Informations sur l'emplacement -->
     <div class="location-info-temp">
       <h2>Round {{ currentRound }} / {{ rounds }}</h2>
       <p>{{ location.description }}</p>
       <p>Difficulty: {{ location.difficulty }}</p>
+      <p>Location: {{ location.xCoordinate }}</p>
+      <p>Location: {{ location.yCoordinate }}</p>
     </div>
-
 
     <!-- Timer -->
     <div *ngIf="gameState === 'playing'" class="timer">
-      <div> {{ timer }} </div>
+      <div>{{ timer }}</div>
     </div>
-
 
     <!-- Scores -->
     <div class="score-bloc">
@@ -27,7 +35,7 @@
 
     <!-- Bouton Submit -->
     <div class="bouton-submit" *ngIf="gameState === 'playing'">
-      <button (click)="submitGuess()">Submit</button>
+      <button (click)="submitGuess()" [disabled]="!userGuess">Submit</button>
     </div>
 
     <!-- Résultat du round -->
@@ -36,6 +44,11 @@
       <p>Your Guess: X={{ userGuess?.[0] || 'N/A' }}, Y={{ userGuess?.[1] || 'N/A' }}</p>
       <p>Correct Answer: X={{ correctAnswer[0] }}, Y={{ correctAnswer[1] }}</p>
       <p>Score: {{ roundScores[currentRound - 1] }}</p>
+
+      <!-- Bouton pour passer au prochain round -->
+      <button (click)="nextRound()" class="next-round-button">
+        Next Round
+      </button>
     </div>
 
     <!-- Carte interactive -->
@@ -49,12 +62,6 @@
   <div *ngIf="error" class="error">
     <p>{{ error }}</p>
   </div>
-</div>
-
-<!-- Écran de chargement -->
-<div *ngIf="!location && !error" class="loading-screen">
-  <div class="spinner"></div>
-  <p>Loading...</p>
 </div>
 
 <!-- Écran de fin de jeu -->
