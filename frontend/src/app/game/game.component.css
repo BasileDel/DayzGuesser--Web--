@@ -34,12 +34,12 @@ p {
 }
 
 /* --------------------------------- Timer --------------------------------- */
-.time {
+.timer {
   position: absolute;
   top: 20px; /* Positionné en haut de l'écran */
   left: 50%;
   transform: translateX(-50%); /* Centré horizontalement */
-  font-size: 1.5rem;
+  font-size: 2.2rem;
   font-weight: bold;
   color: white; /* Couleur du texte */
   text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7); /* Ombre pour rendre le texte lisible */

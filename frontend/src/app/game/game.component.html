@@ -3,37 +3,45 @@
   <div class="content-overlay">
     <!-- Informations sur l'emplacement -->
     <div class="location-info-temp">
-      <h2>Game Round</h2>
+      <h2>Round {{ currentRound }} / {{ rounds }}</h2>
       <p>{{ location.description }}</p>
-      <p>Coordinates: X={{ location.xCoordinate }}, Y={{ location.yCoordinate }}</p>
       <p>Difficulty: {{ location.difficulty }}</p>
-      <p>Path: {{ location.imagePath }}</p>
     </div>
 
+
     <!-- Timer -->
-    <div class="time">
-      <p>Time left: NaN</p>
+    <div *ngIf="gameState === 'playing'" class="timer">
+      <div> {{ timer }} </div>
     </div>
+
 
     <!-- Scores -->
     <div class="score-bloc">
       <div class="score-global">
-        <p>Global Score: NaN</p>
+        <p>Global Score: {{ totalScore }}</p>
       </div>
-      <div class="score-round">
-        <p>Round Score: NaN</p>
+      <div class="score-round" *ngIf="roundScores.length > 0">
+        <p>Last Round Score: {{ roundScores[roundScores.length - 1] }}</p>
       </div>
     </div>
 
     <!-- Bouton Submit -->
-    <div class="bouton-submit">
-      <button>Submit</button>
+    <div class="bouton-submit" *ngIf="gameState === 'playing'">
+      <button (click)="submitGuess()">Submit</button>
+    </div>
+
+    <!-- Résultat du round -->
+    <div *ngIf="gameState === 'reviewing'" class="review-panel">
+      <p>Round {{ currentRound }} Results:</p>
+      <p>Your Guess: X={{ userGuess?.[0] || 'N/A' }}, Y={{ userGuess?.[1] || 'N/A' }}</p>
+      <p>Correct Answer: X={{ correctAnswer[0] }}, Y={{ correctAnswer[1] }}</p>
+      <p>Score: {{ roundScores[currentRound - 1] }}</p>
     </div>
 
     <!-- Carte interactive -->
     <div id="map-container">
-      <div class="difficulty"> difficulty : {{ location.difficulty }}</div>
-      <app-map></app-map>
+      <div class="difficulty">Difficulty: {{ location.difficulty }}</div>
+      <app-map (userGuess)="handleUserGuess($event)"></app-map>
     </div>
   </div>
 
@@ -43,8 +51,18 @@
   </div>
 </div>
 
+<!-- Écran de chargement -->
 <div *ngIf="!location && !error" class="loading-screen">
   <div class="spinner"></div>
   <p>Loading...</p>
 </div>
 
+<!-- Écran de fin de jeu -->
+<div *ngIf="gameState === 'end'" class="end-panel">
+  <h2>Game Over</h2>
+  <p>Total Score: {{ totalScore }}</p>
+  <div>
+    <p *ngFor="let score of roundScores; let i = index">Round {{ i + 1 }}: {{ score }} points</p>
+  </div>
+  <button (click)="startGame()">Restart</button>
+</div>
