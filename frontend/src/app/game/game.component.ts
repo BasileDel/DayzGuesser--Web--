@@ -27,6 +27,7 @@ export class GameComponent implements OnInit {
 
   gameState: 'playing' | 'reviewing' | 'end' = 'playing';
   isMapDisabled: boolean = false;
+  roundSummaryVisible: boolean = false;
 
   constructor(private gameService: GameService, private mapService: MapService) {}
 
@@ -113,12 +114,20 @@ export class GameComponent implements OnInit {
     this.calculateScore();
 
     this.mapService.addMarkersAndLine(this.userGuess!, this.correctAnswer);
-    this.mapService.expandMap();
+    // this.mapService.expandMap(); // Étend la carte et la décale à gauche
+
+
+    this.mapService.hideToggleButton(); // Masque le bouton
+
+    this.roundSummaryVisible = true; // Affiche le bloc de résumé
   }
 
   nextRound(): void {
     if (this.currentRound < this.rounds) {
       this.currentRound++;
+      this.roundSummaryVisible = false; // Affiche le bloc de résumé
+      this.mapService.showToggleButton(); // Affiche le bouton
+
       this.startRound();
     } else {
       this.endGame();
@@ -155,4 +164,6 @@ export class GameComponent implements OnInit {
   handleUserGuess(guess: [number, number]): void {
     this.userGuess = guess;
   }
+
+
 }

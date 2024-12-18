@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import * as L from 'leaflet';
-import { NgClass } from '@angular/common';
+import {NgClass, NgIf} from '@angular/common';
 import { MapService } from '../services/map.service';
 
 @Component({
@@ -8,7 +8,7 @@ import { MapService } from '../services/map.service';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css'],
   standalone: true,
-  imports: [NgClass],
+  imports: [NgClass, NgIf],
 })
 export class MapComponent implements OnInit {
   private map!: L.Map; // Instance de la carte Leaflet
@@ -17,7 +17,7 @@ export class MapComponent implements OnInit {
   isLoading: boolean = false; // Indicateur de chargement
   @Output() userGuess = new EventEmitter<[number, number]>(); // Événement pour signaler les coordonnées cliquées
 
-  constructor(private mapService: MapService) {}
+  constructor(protected mapService: MapService) {}
 
   ngOnInit(): void {
     this.initMap();
@@ -25,7 +25,6 @@ export class MapComponent implements OnInit {
 
   toggleMap(): void {
     this.isExpanded = !this.isExpanded;
-
     // Recalcule la taille de la carte après basculement
     setTimeout(() => {
       if (this.map) {
@@ -34,20 +33,17 @@ export class MapComponent implements OnInit {
     }, 300);
   }
 
-  resetMap(): void {
-    if (this.map) {
-      // Supprime toutes les couches sauf l'image de fond
-      this.map.eachLayer((layer) => {
-        if (!(layer instanceof L.ImageOverlay)) {
-          this.map.removeLayer(layer);
-        }
-      });
-      this.marker = null!; // Réinitialise le marqueur
-    }
+  SizeUpMap(): void {
+    this.isExpanded = true;
+    // Recalcule la taille de la carte après basculement
+    setTimeout(() => {
+      if (this.map) {
+        this.map.invalidateSize();
+      }
+    }, 300);
   }
 
-
-  private initMap(): void {
+ private initMap(): void {
     const imageBounds = L.latLngBounds(
       [0, 0],        // Coin inférieur gauche (ymin, xmin)
       [15360, 15360] // Coin supérieur droit (ymax, xmax)
@@ -104,7 +100,7 @@ export class MapComponent implements OnInit {
     } else {
       // Créer un nouveau marqueur
       const markerIcon = L.icon({
-        iconUrl: 'assets/pin.png', // Chemin vers l'icône du marqueur
+        iconUrl: 'assets/pin/pin.png', // Chemin vers l'icône du marqueur
         iconSize: [32, 32],
         iconAnchor: [16, 32],
       });

@@ -5,6 +5,11 @@
   </div>
   <div id="map"></div>
 </div>
-<button (click)="toggleMap()" class="toggle-button">
+
+<button
+  *ngIf="!mapService.isToggleButtonHidden()"
+  (click)="toggleMap()"
+  class="toggle-button">
   {{ isExpanded ? 'Réduire' : 'Agrandir' }}
 </button>
+

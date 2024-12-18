@@ -18,6 +18,15 @@
       <p>Location: {{ location.yCoordinate }}</p>
     </div>
 
+    <div *ngIf="roundSummaryVisible" class="round-summary">
+      <div class="round">Round {{ currentRound }}</div>
+      <div class="guessLine">Your <div class="guess"> Guess </div> - <br> x : {{ userGuess?.[0] }} <br> y : {{ userGuess?.[1] }}</div>
+      <div class="location">The Location - <br> x : {{ correctAnswer[0] }} <br> y : {{ correctAnswer[1] }}</div>
+      <div>Score : <span [ngClass]="{'positive': roundScores[currentRound - 1] > 0}">
+    + {{ roundScores[currentRound - 1] }}</span></div>
+      <button (click)="nextRound()" class="next-round-button">Next Round</button>
+    </div>
+
     <!-- Timer -->
     <div *ngIf="gameState === 'playing'" class="timer">
       <div>{{ timer }}</div>
@@ -35,7 +44,7 @@
 
     <!-- Bouton Submit -->
     <div class="bouton-submit" *ngIf="gameState === 'playing'">
-      <button (click)="submitGuess()" [disabled]="!userGuess">Submit</button>
+      <button (click)="submitGuess(); mapComponent.SizeUpMap()" [disabled]="!userGuess">Submit</button>
     </div>
 
     <!-- Résultat du round -->
@@ -44,11 +53,6 @@
       <p>Your Guess: X={{ userGuess?.[0] || 'N/A' }}, Y={{ userGuess?.[1] || 'N/A' }}</p>
       <p>Correct Answer: X={{ correctAnswer[0] }}, Y={{ correctAnswer[1] }}</p>
       <p>Score: {{ roundScores[currentRound - 1] }}</p>
-
-      <!-- Bouton pour passer au prochain round -->
-      <button (click)="nextRound()" class="next-round-button">
-        Next Round
-      </button>
     </div>
 
     <!-- Carte interactive -->

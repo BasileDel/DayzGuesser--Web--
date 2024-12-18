@@ -7,6 +7,7 @@ import * as L from 'leaflet';
 export class MapService {
   private mapInstance!: L.Map;
   private clickHandler!: (event: L.LeafletMouseEvent) => void;
+  private isToggleHidden: boolean = false; // État pour cacher le bouton
 
   setMapInstance(map: L.Map): void {
     this.mapInstance = map;
@@ -15,12 +16,12 @@ export class MapService {
   disableInteractions(): void {
     if (!this.mapInstance) return;
 
-    this.mapInstance.dragging.disable();
-    this.mapInstance.touchZoom.disable();
-    this.mapInstance.doubleClickZoom.disable();
-    this.mapInstance.scrollWheelZoom.disable();
-    this.mapInstance.boxZoom.disable();
-    this.mapInstance.keyboard.disable();
+    // this.mapInstance.dragging.disable();
+    // this.mapInstance.touchZoom.disable();
+    // this.mapInstance.doubleClickZoom.disable();
+    // this.mapInstance.scrollWheelZoom.disable();
+    // this.mapInstance.boxZoom.disable();
+    // this.mapInstance.keyboard.disable();
 
     this.mapInstance.off('click'); // Désactive le clic uniquement
   }
@@ -50,7 +51,7 @@ export class MapService {
 
       // Ajouter le marqueur pour la réponse correcte (rouge)
       const correctIcon = L.icon({
-        iconUrl: 'assets/pin.png',
+        iconUrl: 'assets/pin/LocationPin.png',
         iconSize: [32, 32],
         iconAnchor: [16, 32],
       });
@@ -58,7 +59,7 @@ export class MapService {
 
       // Ajouter le marqueur pour la position utilisateur (bleu)
       const userIcon = L.icon({
-        iconUrl: 'assets/pin.png',
+        iconUrl: 'assets/pin/GuessPin.png',
         iconSize: [32, 32],
         iconAnchor: [16, 32],
       });
@@ -66,7 +67,7 @@ export class MapService {
 
       // Tracer la ligne en pointillés entre les deux points
       const line = L.polyline([userGuess, correctAnswer], {
-        color: 'blue',
+        color: 'black',
         dashArray: '5, 10',
         weight: 3,
       }).addTo(this.mapInstance);
@@ -128,12 +129,16 @@ export class MapService {
   }
 
 
-  expandMap(): void {
-    if (this.mapInstance) {
-      setTimeout(() => {
-        this.mapInstance.invalidateSize();
-      }, 300);
-    }
+  /* ---------------------------- Methods button ---------------------------- */
+  hideToggleButton(): void {
+    this.isToggleHidden = true; // Masque le bouton
   }
 
+  showToggleButton(): void {
+    this.isToggleHidden = false; // Affiche le bouton
+  }
+
+  isToggleButtonHidden(): boolean {
+    return this.isToggleHidden; // Retourne l'état d'affichage
+  }
 }
