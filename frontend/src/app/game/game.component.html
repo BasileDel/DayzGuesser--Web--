@@ -1,79 +1,96 @@
-<!-- Indicateur de chargement global -->
-<div *ngIf="isLoading || (!location && !error)" class="loading-screen">
-  <div class="spinner"></div>
-  <p>Loading...</p>
-</div>
+  <!-- Indicateur de chargement global -->
+  <div *ngIf="isLoading || (!location && !error)" class="loading-screen">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
 
-<!-- Contenu principal -->
-<div *ngIf="location && !isLoading" class="background-location"
-     [ngStyle]="{'background-image': 'url(assets/' + location.imagePath + ')'}">
+  <!-- Contenu principal -->
+  <div *ngIf="location && !isLoading" class="background-location"
+       [ngStyle]="{'background-image': 'url(assets/' + location.imagePath + ')'}">
 
-  <div class="content-overlay">
-    <!-- Informations sur l'emplacement -->
-    <div class="location-info-temp">
-      <h2>Round {{ currentRound }} / {{ rounds }}</h2>
-      <p>{{ location.description }}</p>
-      <p>Difficulty: {{ location.difficulty }}</p>
-      <p>Location: {{ location.xCoordinate }}</p>
-      <p>Location: {{ location.yCoordinate }}</p>
-    </div>
-
-    <div *ngIf="roundSummaryVisible" class="round-summary">
-      <div class="round">Round {{ currentRound }}</div>
-      <div class="guessLine">Your <div class="guess"> Guess </div> - <br> x : {{ userGuess?.[0] }} <br> y : {{ userGuess?.[1] }}</div>
-      <div class="location">The Location - <br> x : {{ correctAnswer[0] }} <br> y : {{ correctAnswer[1] }}</div>
-      <div>Score : <span [ngClass]="{'positive': roundScores[currentRound - 1] > 0}">
-    + {{ roundScores[currentRound - 1] }}</span></div>
-      <button (click)="nextRound()" class="next-round-button">Next Round</button>
-    </div>
-
-    <!-- Timer -->
-    <div *ngIf="gameState === 'playing'" class="timer">
-      <div>{{ timer }}</div>
-    </div>
-
-    <!-- Scores -->
-    <div class="score-bloc">
-      <div class="score-global">
-        <p>Global Score: {{ totalScore }}</p>
+    <div class="content-overlay">
+      <div class="Round">Round {{ currentRound }} / {{ rounds }}</div>
+      <!-- Informations sur l'emplacement -->
+      <div class="location-info-temp">
+        <p>{{ location.description }}</p>
+        <p>Difficulty: {{ location.difficulty }}</p>
+        <p>Location: {{ location.xCoordinate }}</p>
+        <p>Location: {{ location.yCoordinate }}</p>
       </div>
-      <div class="score-round" *ngIf="roundScores.length > 0">
-        <p>Last Round Score: {{ roundScores[roundScores.length - 1] }}</p>
+
+      <div *ngIf="roundSummaryVisible" class="round-summary">
+        <div class="round">Round {{ currentRound }}</div>
+        <div class="guessLine">
+          Your <div class="guess"> Guess </div> -
+        </div>
+        <div class="">
+          x : {{ userGuess?.[0] | number:'1.0-0' }} <br>
+          y : {{ userGuess?.[1] | number:'1.0-0' }}
+        </div>
+
+        <div class="locationLine">
+          The <div class="location"> Location</div> - <br>
+        </div>
+          x : {{ correctAnswer[0] | number:'1.0-0' }} <br>
+          y : {{ correctAnswer[1] | number:'1.0-0' }}
+
+        <div class="ScoreLine">
+          <strong> Score </strong> : <span [ngClass]="{'positive': roundScores[currentRound - 1] > 0}">
+            + {{ roundScores[currentRound - 1] }}
+          </span>
+        </div>
+        <button (click)="nextRound()" class="next-round-button">Next Round</button>
+      </div>
+
+
+
+      <!-- Timer -->
+      <div *ngIf="gameState === 'playing'" class="timer">
+        <div>{{ timer }}</div>
+      </div>
+
+      <!-- Scores -->
+      <div class="score-bloc">
+        <div class="score-global">
+          <p>Global Score: {{ totalScore }}</p>
+        </div>
+        <div class="score-round" *ngIf="roundScores.length > 0">
+          <p>Last Round Score: {{ roundScores[roundScores.length - 1] }}</p>
+        </div>
+      </div>
+
+      <!-- Bouton Submit -->
+      <div class="bouton-submit" *ngIf="gameState === 'playing'">
+        <button (click)="submitGuess(); mapComponent.SizeUpMap()" [disabled]="!userGuess">Submit</button>
+      </div>
+
+      <!-- Résultat du round -->
+      <div *ngIf="gameState === 'reviewing'" class="review-panel">
+        <p>Round {{ currentRound }} Results:</p>
+        <p>Your Guess: X={{ userGuess?.[0] || 'N/A' }}, Y={{ userGuess?.[1] || 'N/A' }}</p>
+        <p>Correct Answer: X={{ correctAnswer[0] }}, Y={{ correctAnswer[1] }}</p>
+        <p>Score: {{ roundScores[currentRound - 1] }}</p>
+      </div>
+
+      <!-- Carte interactive -->
+      <div id="map-container">
+        <div class="difficulty">Difficulty: {{ location.difficulty }}</div>
+        <app-map (userGuess)="handleUserGuess($event)"></app-map>
       </div>
     </div>
 
-    <!-- Bouton Submit -->
-    <div class="bouton-submit" *ngIf="gameState === 'playing'">
-      <button (click)="submitGuess(); mapComponent.SizeUpMap()" [disabled]="!userGuess">Submit</button>
-    </div>
-
-    <!-- Résultat du round -->
-    <div *ngIf="gameState === 'reviewing'" class="review-panel">
-      <p>Round {{ currentRound }} Results:</p>
-      <p>Your Guess: X={{ userGuess?.[0] || 'N/A' }}, Y={{ userGuess?.[1] || 'N/A' }}</p>
-      <p>Correct Answer: X={{ correctAnswer[0] }}, Y={{ correctAnswer[1] }}</p>
-      <p>Score: {{ roundScores[currentRound - 1] }}</p>
-    </div>
-
-    <!-- Carte interactive -->
-    <div id="map-container">
-      <div class="difficulty">Difficulty: {{ location.difficulty }}</div>
-      <app-map (userGuess)="handleUserGuess($event)"></app-map>
+    <!-- Erreur éventuelle -->
+    <div *ngIf="error" class="error">
+      <p>{{ error }}</p>
     </div>
   </div>
 
-  <!-- Erreur éventuelle -->
-  <div *ngIf="error" class="error">
-    <p>{{ error }}</p>
+  <!-- Écran de fin de jeu -->
+  <div *ngIf="gameState === 'end'" class="end-panel">
+    <h2>Game Over</h2>
+    <p>Total Score: {{ totalScore }}</p>
+    <div>
+      <p *ngFor="let score of roundScores; let i = index">Round {{ i + 1 }}: {{ score }} points</p>
+    </div>
+    <button (click)="startGame()">Restart</button>
   </div>
-</div>
-
-<!-- Écran de fin de jeu -->
-<div *ngIf="gameState === 'end'" class="end-panel">
-  <h2>Game Over</h2>
-  <p>Total Score: {{ totalScore }}</p>
-  <div>
-    <p *ngFor="let score of roundScores; let i = index">Round {{ i + 1 }}: {{ score }} points</p>
-  </div>
-  <button (click)="startGame()">Restart</button>
-</div>

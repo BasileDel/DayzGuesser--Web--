@@ -2,6 +2,12 @@
   padding-top: 8%;
 }
 
+.Round {
+  top: 0;
+  left: 0;
+  display: flex;
+}
+
 .background-location {
   background-size: cover; /* Remplit l'écran tout en respectant les proportions */
   background-position: center; /* Centre l'image */
@@ -207,9 +213,10 @@ p {
 
 .round-summary {
   position: absolute;
-  top: 20%;
-  right: 0;
-  width: 280px; /* Largeur ajustée pour contenir le bloc */
+  top: 50%; /* Positionné au milieu verticalement */
+  right: 20px; /* Collé au flanc droit avec un espace */
+  transform: translateY(-50%); /* Centre parfaitement verticalement */
+  width: 200px; /* Largeur fixe */
   background-color: #333; /* Fond sombre */
   color: white; /* Texte en blanc */
   padding: 15px 20px;
@@ -218,7 +225,9 @@ p {
   text-align: left;
   font-family: Arial, sans-serif;
   line-height: 1.6; /* Espacement entre les lignes */
+  z-index: 99; /* Assure que le bloc est au-dessus de la carte */
 }
+
 
 .round-summary .round {
   font-size: 1.2rem;
@@ -235,16 +244,23 @@ p {
   font-size: 1rem;
 }
 
+.round-summary .locationLine {
+  display: flex; /* Met les éléments sur la même ligne */
+  align-items: center; /* Centre verticalement */
+  gap: 5px;
+  margin-top: 18px;
+  font-size: 1rem;
+}
+
+.round-summary .ScoreLine {
+  margin-top: 25px;
+}
+
 .round-summary .guess {
   color: #ff914d;
   font-weight: bold;
 }
 
-.round-summary .location {
-  margin-top: 10px;
-  font-size: 1rem;
-  color: #ff914d; /* Couleur orange */
-}
 
 .round-summary .positive {
   color: #28a745; /* Couleur verte */
@@ -267,6 +283,11 @@ p {
 
 .next-round-button:hover {
   background-color: #2563eb; /* Légèrement plus clair */
+}
+
+.round-summary .location {
+  color: #007bff; /* Bleu */
+  font-weight: bold; /* Gras */
 }
 
 
