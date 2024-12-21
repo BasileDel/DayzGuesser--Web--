@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http'; // Importez ce module
+import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
@@ -18,7 +18,6 @@ import {MapComponent} from './map/map.component';
     AppRoutingModule,
     HttpClientModule,
     MapComponent,
-    // Ajoutez-le ici
   ],
   providers: [],
   bootstrap: [AppComponent],
