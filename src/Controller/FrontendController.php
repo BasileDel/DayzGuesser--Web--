@@ -11,7 +11,7 @@ class FrontendController extends AbstractController
     #[Route('/{route}', name: 'frontend', requirements: ['route' => '.*'], priority: -1)]
     public function index(): Response
     {
-        $filePath = $this->getParameter('kernel.project_dir') . '/public/frontend/browser/index.html';
+        $filePath = $this->getParameter('kernel.project_dir') . '/frontend/src/dist/index.html';
 
         return new Response(
             file_get_contents($filePath),
