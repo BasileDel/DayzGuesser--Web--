@@ -19,6 +19,8 @@ export class GameComponent implements OnInit {
   currentRound: number = 1;
   timer: number = 90;
   interval: any;
+  startTime: number = 0;
+
 
   totalScore: number = 0;
   roundScores: number[] = [];
@@ -60,10 +62,12 @@ export class GameComponent implements OnInit {
 
   /* ---------------------------- Méthodes de jeu ---------------------------- */
   startGame(): void {
+    this.startTime = Date.now(); // Enregistre l'heure de début en millisecondes
     this.currentRound = 1;
     this.totalScore = 0;
     this.roundScores = [];
     this.startRound();
+    this.roundSummaryVisible = false;
   }
 
   startRound(): void {
@@ -114,9 +118,6 @@ export class GameComponent implements OnInit {
     this.calculateScore();
 
     this.mapService.addMarkersAndLine(this.userGuess!, this.correctAnswer);
-    // this.mapService.expandMap(); // Étend la carte et la décale à gauche
-
-
     this.mapService.hideToggleButton(); // Masque le bouton
 
     this.roundSummaryVisible = true; // Affiche le bloc de résumé
@@ -125,7 +126,7 @@ export class GameComponent implements OnInit {
   nextRound(): void {
     if (this.currentRound < this.rounds) {
       this.currentRound++;
-      this.roundSummaryVisible = false; // Affiche le bloc de résumé
+      this.roundSummaryVisible = false;
       this.mapService.showToggleButton(); // Affiche le bouton
 
       this.startRound();
@@ -153,6 +154,7 @@ export class GameComponent implements OnInit {
   endGame(): void {
     this.gameState = 'end';
     this.stopTimer();
+    this.endGameCalculations();
   }
 
   getDistance(guess: [number, number], correct: [number, number]): number {
@@ -165,5 +167,27 @@ export class GameComponent implements OnInit {
     this.userGuess = guess;
   }
 
+  totalTime: number = 0;
+  rank: string = '';
+  bestRound: { round: number; score: number } = { round: 0, score: 0 };
 
+  endGameCalculations(): void {
+    this.totalTime = Math.round((Date.now() - this.startTime) / 1000); // Calcule le temps total en secondes
+    this.rank = this.getRank(this.totalScore);
+    this.bestRound = this.getBestRound();
+  }
+
+
+  getRank(score: number): string {
+    if (score >= 35000) return 'Gold';
+    if (score >= 20000) return 'Silver';
+    if (score >= 10000) return 'Bronze';
+    return 'Participant';
+  }
+
+  getBestRound(): { round: number; score: number } {
+    const maxScore = Math.max(...this.roundScores);
+    const roundIndex = this.roundScores.indexOf(maxScore);
+    return { round: roundIndex + 1, score: maxScore };
+  }
 }

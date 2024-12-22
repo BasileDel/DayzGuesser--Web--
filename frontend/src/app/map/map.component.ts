@@ -65,7 +65,7 @@ export class MapComponent implements OnInit {
     // Transmettre la référence de la carte au MapService
     this.mapService.setMapInstance(this.map);
 
-    const imageUrl = 'assets/georeferenced/day-z-sakhal-watermarked_georeferenced.png'; // Chemin vers l'image locale
+    const imageUrl = 'assets/georeferenced/dayz-georeferenced-webp.webp'; // Chemin vers l'image locale
     const imageOverlay = L.imageOverlay(imageUrl, imageBounds, {
       opacity: 1.0,
       interactive: true,

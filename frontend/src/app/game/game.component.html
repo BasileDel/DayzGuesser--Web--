@@ -85,12 +85,47 @@
     </div>
   </div>
 
+
   <!-- Écran de fin de jeu -->
-  <div *ngIf="gameState === 'end'" class="end-panel">
-    <h2>Game Over</h2>
-    <p>Total Score: {{ totalScore }}</p>
-    <div>
-      <p *ngFor="let score of roundScores; let i = index">Round {{ i + 1 }}: {{ score }} points</p>
+  <div *ngIf="gameState === 'end'" class="end-panel-wrapper">
+    <!-- Voile noir -->
+    <div class="overlay"></div>
+
+    <!-- Panneau de récapitulatif -->
+    <div class="end-panel round-summary">
+      <h2 class="end-title">Game Over</h2>
+
+      <!-- Score total -->
+      <div class="total-score">
+        <strong>Total Score:</strong> {{ totalScore }}
+      </div>
+
+      <!-- Temps total de jeu -->
+      <div class="total-time">
+        <strong>Total Time Played:</strong> {{ totalTime }} seconds
+      </div>
+
+      <!-- Rang basé sur le score -->
+      <div class="rank">
+        <strong>Rank:</strong> <span [ngClass]="rank.toLowerCase()">{{ rank }}</span>
+      </div>
+
+      <!-- Meilleur round -->
+      <div class="best-round">
+        <strong>Best Round:</strong> Round {{ bestRound.round }} with {{ bestRound.score }} points
+      </div>
+
+      <!-- Scores de chaque round -->
+      <div class="round-scores">
+        <p *ngFor="let score of roundScores; let i = index" class="round-score">
+          Round {{ i + 1 }}: <span class="score-value">{{ score }} points</span>
+        </p>
+      </div>
+
+      <!-- Bouton de redémarrage -->
+      <button (click)="startGame()" class="next-round-button restart-button">Restart</button>
     </div>
-    <button (click)="startGame()">Restart</button>
+
   </div>
+
+
